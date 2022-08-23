@@ -33,15 +33,3 @@ document.querySelector('#check-hide').addEventListener('change', function(e){
     hideText.situation = !e.target.checked
     hideCompleted(todos,hideText)
 })
-
-/*
- // Remove p's includes 'the'
-const ps = document.querySelectorAll('p')
-
-ps.forEach(function(p){
-    if(p.textContent.includes('the')){
-        console.log(p)
-        p.remove()
-    }
-})
-*/
