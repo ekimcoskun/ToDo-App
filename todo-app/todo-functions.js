@@ -9,6 +9,15 @@ const getSavedTodos = function () {
     }
 }
 
+// Remove Note
+const removeTodo = function (id){
+    const todoIndex = todos.findIndex(function(todo){
+        console.log(todo.id + "   " + id)
+        return todo.id === id
+    })
+    todos.splice(todoIndex,1)
+}
+
 // Save todos to localStorage
 const saveTodos = function (todos) {
     localStorage.setItem('todos', JSON.stringify(todos))
@@ -53,6 +62,12 @@ const generateTodoDOM = function (todo) {
     // Setup the remove button
     removeButton.textContent = 'X'
     todoEl.appendChild(removeButton)
+
+    removeButton.addEventListener('click',function(){
+        removeTodo(todo.id)
+        saveTodos(todos)
+        renderTodos(todos,filters)
+    })
 
     return todoEl
 }
