@@ -1,35 +1,42 @@
 let todos = getSavedTodos()
 
-const searchText = {
-    search:''
+const filters = {
+    searchText: '',
+    hideCompleted: false
 }
 
-const hideText = {
-    situation: false
-}
+renderTodos(todos, filters)
 
-hideCompleted(todos,hideText)
-
-renderTodos(todos,searchText)
-
-generateSummaryDOM(todos)
-
-document.querySelector('#filter-todo').addEventListener('input', function(e){
-    searchText.search = e.target.value
-    renderTodos(todos,searchText)
+document.querySelector('#search-text').addEventListener('input', function (e) {
+    filters.searchText = e.target.value
+    renderTodos(todos, filters)
 })
 
-document.querySelector('#form').addEventListener('submit',function(e){
+document.querySelector('#new-todo').addEventListener('submit', function (e) {
     e.preventDefault()
-    const name = e.target.elements.inputTodo.value
-    todos.push({jobTitle:name ,completed: false})
-    saveTodo(todos)
-    console.log('New Todo Added')
-    renderTodos(todos,searchText)
-    e.target.elements.inputTodo.value = ''
+    todos.push({
+        id: uuidv4(),
+        text: e.target.elements.text.value,
+        completed: false
+    })
+    saveTodos(todos)
+    renderTodos(todos, filters)
+    e.target.elements.text.value = ''
 })
 
-document.querySelector('#check-hide').addEventListener('change', function(e){
-    hideText.situation = !e.target.checked
-    hideCompleted(todos,hideText)
+document.querySelector('#hide-completed').addEventListener('change', function (e) {
+    filters.hideCompleted = e.target.checked
+    renderTodos(todos, filters)
 })
+
+/*
+ // Remove p's includes 'the'
+const ps = document.querySelectorAll('p')
+
+ps.forEach(function(p){
+    if(p.textContent.includes('the')){
+        console.log(p)
+        p.remove()
+    }
+})
+*/

@@ -1,67 +1,65 @@
-// Get Saved Todos
-const getSavedTodos = function(){
-    const todoJSON = localStorage.getItem('todos')
+// Fetch existing todos from localStorage
+const getSavedTodos = function () {
+    const todosJSON = localStorage.getItem('todos')
 
-if(todoJSON !== null){
-    return JSON.parse(todoJSON)
-}else{
-    return []
-}}
-
-// Save Todos to localStorage
-const saveTodo = function(todos){
-    localStorage.setItem('todos',JSON.stringify(todos))
+    if (todosJSON !== null) {
+        return JSON.parse(todosJSON)
+    } else {
+        return []
+    }
 }
 
-// Render todos
-const renderTodos = function(task,filter){
-    const filteredTodos = task.filter(function(todo){
-        return todo.jobTitle.toLowerCase().includes(filter.search.toLowerCase())
-    })
-    document.querySelector('#area').innerHTML = ''
+// Save todos to localStorage
+const saveTodos = function (todos) {
+    localStorage.setItem('todos', JSON.stringify(todos))
+}
 
-    filteredTodos.forEach(function(value){
-        const ps = document.createElement('p')
-
-        if(value.jobTitle.length > 0 ){
-            ps.textContent = value.jobTitle
-        }
-        else{
-            ps.textContent = 'Unnamed Job'
-        }
-        document.querySelector('#area').appendChild(ps)
+// Render application todos based on filters
+const renderTodos = function (todos, filters) {
+    const filteredTodos = todos.filter(function (todo) {
+        const searchTextMatch = todo.text.toLowerCase().includes(filters.searchText.toLowerCase())
+        const hideCompletedMatch = !filters.hideCompleted || !todo.completed
+        
+        return searchTextMatch && hideCompletedMatch
     })
+
+    const incompleteTodos = filteredTodos.filter(function (todo) {
+        return !todo.completed
+    })
+
+    document.querySelector('#todos').innerHTML = ''
+    document.querySelector('#todos').appendChild(generateSummaryDOM(incompleteTodos))
+
+    filteredTodos.forEach(function (todo) {
+        document.querySelector('#todos').appendChild(generateTodoDOM(todo))
+    })
+}
+
+// Get the DOM elements for an individual note
+const generateTodoDOM = function (todo) {
+    const todoEl = document.createElement('div')
+    const checkbox = document.createElement('input')
+    const todoText = document.createElement('span')
+    const removeButton = document.createElement('button')
+
+    // Setup todo checkbox
+    checkbox.setAttribute('type', 'checkbox')
+    todoEl.appendChild(checkbox)
+
+    // Setup the todo text
+    todoText.textContent = todo.text
+    todoEl.appendChild(todoText)
+
+    // Setup the remove button
+    removeButton.textContent = 'X'
+    todoEl.appendChild(removeButton)
+
+    return todoEl
 }
 
 // Get the DOM elements for list summary
-const generateSummaryDOM = function(todos){
-    let counter = 0
-
-    todos.forEach(function(value){
-        if(!value.completed){
-        counter++
-        }
-    })
-    const left = document.createElement('h2')
-    left.textContent = `You have ${counter} jobs todo.`
-    document.querySelector('body').appendChild(left)
-}
-
-// Hide Completed Todos Function
-const hideCompleted = function (tasks,hide){
-    const hidedTodos = tasks.filter(function(todo){
-        return todo.completed === hide.situation
-    })
-
-    document.querySelector('#area').innerHTML = ''
-    if(!hideText.situation){
-        hidedTodos.forEach(function(value){
-        const ps = document.createElement('p')
-        ps.textContent = value.jobTitle
-        document.querySelector('#area').appendChild(ps)
-    }) 
-    }
-    else{
-        renderTodos(todos,searchText)
-    }
+const generateSummaryDOM = function (incompleteTodos) {
+    const summary = document.createElement('h2')
+    summary.textContent = `You have ${incompleteTodos.length} todos left`
+    return summary
 }
